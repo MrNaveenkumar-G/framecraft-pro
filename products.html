@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Products - FrameCraft Pro</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand" href="index.html"><span class="brand-icon"><i class="fas fa-border-all"></i></span><span class="brand-text">Frame<strong>Craft</strong></span></a>
+    <div class="d-flex align-items-center gap-3 ms-auto">
+      <button class="btn btn-theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon" id="themeIcon"></i></button>
+      <div class="nav-profile" onclick="window.location='settings.html'"><img src="" id="navAvatar" class="nav-avatar" alt=""/><span id="navUserName">User</span></div>
+    </div>
+  </div>
+</nav>
+<div class="dashboard-layout">
+  <aside class="sidebar">
+    <div class="sidebar-section-label">Main</div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="invoice.html"><i class="fas fa-file-invoice"></i> New Invoice</a></li>
+      <li><a href="invoice-history.html"><i class="fas fa-history"></i> Invoice History</a></li>
+      <li><a href="customers.html"><i class="fas fa-users"></i> Customers</a></li>
+      <li><a href="products.html" class="active"><i class="fas fa-th-large"></i> Products</a></li>
+    </ul>
+    <div class="sidebar-section-label">Tools</div>
+    <ul class="sidebar-menu">
+      <li><a href="reminders.html"><i class="fas fa-bell"></i> Reminders</a></li>
+      <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+    </ul>
+  </aside>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="d-flex align-items-center">
+        <div class="page-header-icon"><i class="fas fa-th-large"></i></div>
+        <div><h2>Products</h2><p>Your frame catalog & inventory</p></div>
+      </div>
+      <button class="btn btn-primary-custom" onclick="openAddProduct()"><i class="fas fa-plus me-2"></i>Add Product</button>
+    </div>
+
+    <!-- Filter + Search -->
+    <div class="chart-card mb-4">
+      <div class="row g-3 align-items-center">
+        <div class="col-md-5">
+          <div class="search-bar"><i class="fas fa-search"></i><input type="text" class="form-control" id="searchProd" placeholder="Search products..." oninput="renderProducts()"/></div>
+        </div>
+        <div class="col-md-7">
+          <div class="d-flex gap-2 flex-wrap">
+            <button class="filter-chip active" onclick="setCat('all',this)">All</button>
+            <button class="filter-chip" onclick="setCat('wood',this)">Wood</button>
+            <button class="filter-chip" onclick="setCat('metal',this)">Metal</button>
+            <button class="filter-chip" onclick="setCat('premium',this)">Premium</button>
+            <button class="filter-chip" onclick="setCat('kids',this)">Kids</button>
+            <button class="filter-chip" onclick="setCat('glass',this)">Glass</button>
+            <button class="filter-chip" onclick="setCat('collage',this)">Collage</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3" id="productsGrid"></div>
+  </main>
+</div>
+
+<!-- Add/Edit Product Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" style="background:var(--card-bg);border:1px solid var(--border)">
+      <div class="modal-header" style="border-bottom:1px solid var(--border)">
+        <h5 class="modal-title" style="font-weight:700" id="prodModalTitle">Add Product</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editProdId"/>
+        <div class="row g-3">
+          <div class="col-md-8"><label class="form-label">Product Name *</label><input type="text" id="prodName" class="form-control" placeholder="Classic Wood Frame"/></div>
+          <div class="col-md-4">
+            <label class="form-label">Category</label>
+            <select class="form-select" id="prodCategory">
+              <option value="wood">Wood</option>
+              <option value="metal">Metal</option>
+              <option value="premium">Premium</option>
+              <option value="kids">Kids</option>
+              <option value="glass">Glass</option>
+              <option value="collage">Collage</option>
+            </select>
+          </div>
+          <div class="col-md-4"><label class="form-label">Size</label><input type="text" id="prodSize" class="form-control" placeholder="4x6 inch"/></div>
+          <div class="col-md-4"><label class="form-label">Price (₹) *</label><input type="number" id="prodPrice" class="form-control" placeholder="150"/></div>
+          <div class="col-md-4"><label class="form-label">Stock</label><input type="number" id="prodStock" class="form-control" placeholder="50"/></div>
+          <div class="col-12"><label class="form-label">Gradient Color (CSS)</label><input type="text" id="prodGradient" class="form-control" placeholder="linear-gradient(135deg,#8B5E3C,#D4A05A)"/></div>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top:1px solid var(--border)">
+        <button class="btn btn-outline-custom" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary-custom" onclick="saveProductForm()">Save Product</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/app.js"></script>
+<script>
+let currentCat = 'all';
+document.addEventListener('DOMContentLoaded', renderProducts);
+
+function setCat(cat, el) {
+  currentCat = cat;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderProducts();
+}
+
+function renderProducts() {
+  const search = document.getElementById('searchProd')?.value.toLowerCase() || '';
+  let products = getProducts();
+  if (currentCat !== 'all') products = products.filter(p => p.category === currentCat);
+  if (search) products = products.filter(p => p.name.toLowerCase().includes(search) || p.size.toLowerCase().includes(search));
+  const grid = document.getElementById('productsGrid');
+  if (!grid) return;
+  if (products.length === 0) {
+    grid.innerHTML = `<div class="col-12"><div class="empty-state"><i class="fas fa-th-large"></i><h4>No products found</h4></div></div>`;
+    return;
+  }
+  grid.innerHTML = products.map(p => {
+    const pct = Math.round((p.stock/50)*100);
+    const stockColor = pct > 60 ? '#10B981' : pct > 30 ? '#F59E0B' : '#EF4444';
+    return `
+    <div class="col-sm-6 col-md-4 col-lg-3">
+      <div class="product-card">
+        <div class="product-img" style="background:${p.gradient}">
+          <i class="${p.icon} fa-2x"></i>
+        </div>
+        <div class="product-body">
+          <div class="product-name">${p.name}</div>
+          <div class="product-size">${p.size} • <span style="text-transform:capitalize">${p.category}</span></div>
+          <div class="d-flex align-items-center justify-content-between mt-2">
+            <div class="product-price">${formatCurrency(p.price)}</div>
+            <span style="font-size:0.75rem;color:${stockColor};font-weight:600">${p.stock} in stock</span>
+          </div>
+          <div class="stock-bar mt-2"><div class="stock-fill" style="width:${Math.min(pct,100)}%;background:${stockColor}"></div></div>
+          <div class="product-actions">
+            <button class="btn-add-invoice" onclick="window.location='invoice.html?product=${p.id}'">
+              <i class="fas fa-file-invoice me-1"></i>Add to Invoice
+            </button>
+            <button class="btn btn-sm" style="background:rgba(59,130,246,0.1);color:#3B82F6;border-radius:6px;padding:4px 8px" onclick="editProduct(${p.id})"><i class="fas fa-edit"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openAddProduct() {
+  document.getElementById('prodModalTitle').textContent = 'Add Product';
+  document.getElementById('editProdId').value = '';
+  ['prodName','prodSize','prodPrice','prodStock','prodGradient'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  new bootstrap.Modal(document.getElementById('addProductModal')).show();
+}
+
+function editProduct(id) {
+  const p = getProducts().find(p => p.id === id);
+  if (!p) return;
+  document.getElementById('prodModalTitle').textContent = 'Edit Product';
+  document.getElementById('editProdId').value = id;
+  const set = (eid, val) => { const el = document.getElementById(eid); if(el) el.value = val||''; };
+  set('prodName', p.name); set('prodSize', p.size); set('prodPrice', p.price);
+  set('prodStock', p.stock); set('prodGradient', p.gradient); set('prodCategory', p.category);
+  new bootstrap.Modal(document.getElementById('addProductModal')).show();
+}
+
+function saveProductForm() {
+  const name = document.getElementById('prodName')?.value?.trim();
+  const price = parseFloat(document.getElementById('prodPrice')?.value || 0);
+  if (!name || !price) { showToast('Name and price required', 'error'); return; }
+  const products = getProducts();
+  const editId = parseInt(document.getElementById('editProdId')?.value);
+  const newProd = {
+    name, price, category: document.getElementById('prodCategory')?.value || 'wood',
+    size: document.getElementById('prodSize')?.value || '',
+    stock: parseInt(document.getElementById('prodStock')?.value || 0),
+    gradient: document.getElementById('prodGradient')?.value || 'linear-gradient(135deg,#C8860A,#E8A020)',
+    icon: 'fas fa-border-all'
+  };
+  if (editId) {
+    const idx = products.findIndex(p => p.id === editId);
+    if (idx >= 0) { newProd.id = editId; products[idx] = newProd; }
+  } else {
+    newProd.id = products.length > 0 ? Math.max(...products.map(p=>p.id))+1 : 1;
+    products.push(newProd);
+  }
+  saveProducts(products);
+  bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide();
+  showToast(editId ? 'Product updated!' : 'Product added!', 'success');
+  renderProducts();
+}
+window.setCat = setCat; window.renderProducts = renderProducts;
+window.openAddProduct = openAddProduct; window.editProduct = editProduct; window.saveProductForm = saveProductForm;
+</script>
+</body>
+</html>

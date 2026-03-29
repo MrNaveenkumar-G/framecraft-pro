@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reminders - FrameCraft Pro</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand" href="index.html"><span class="brand-icon"><i class="fas fa-border-all"></i></span><span class="brand-text">Frame<strong>Craft</strong></span></a>
+    <div class="d-flex align-items-center gap-3 ms-auto">
+      <button class="btn btn-theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon" id="themeIcon"></i></button>
+      <div class="nav-profile" onclick="window.location='settings.html'"><img src="" id="navAvatar" class="nav-avatar" alt=""/><span id="navUserName">User</span></div>
+    </div>
+  </div>
+</nav>
+<div class="dashboard-layout">
+  <aside class="sidebar">
+    <div class="sidebar-section-label">Main</div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="invoice.html"><i class="fas fa-file-invoice"></i> New Invoice</a></li>
+      <li><a href="invoice-history.html"><i class="fas fa-history"></i> Invoice History</a></li>
+      <li><a href="customers.html"><i class="fas fa-users"></i> Customers</a></li>
+      <li><a href="products.html"><i class="fas fa-th-large"></i> Products</a></li>
+    </ul>
+    <div class="sidebar-section-label">Tools</div>
+    <ul class="sidebar-menu">
+      <li><a href="reminders.html" class="active"><i class="fas fa-bell"></i> Reminders</a></li>
+      <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+    </ul>
+  </aside>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="d-flex align-items-center">
+        <div class="page-header-icon"><i class="fas fa-bell"></i></div>
+        <div><h2>Reminders</h2><p>Stay on top of your business tasks</p></div>
+      </div>
+      <button class="btn btn-primary-custom" onclick="openAddReminder()"><i class="fas fa-plus me-2"></i>Add Reminder</button>
+    </div>
+
+    <!-- Filter Chips -->
+    <div class="d-flex gap-2 flex-wrap mb-4">
+      <button class="filter-chip active" onclick="filterRem('all',this)">All</button>
+      <button class="filter-chip" onclick="filterRem('urgent',this)">🔴 Urgent</button>
+      <button class="filter-chip" onclick="filterRem('today',this)">🟡 Today</button>
+      <button class="filter-chip" onclick="filterRem('upcoming',this)">🟢 Upcoming</button>
+      <button class="filter-chip" onclick="filterRem('done',this)">✅ Done</button>
+    </div>
+
+    <div id="remindersContainer"></div>
+  </main>
+</div>
+
+<!-- Add Reminder Modal -->
+<div class="modal fade" id="addReminderModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" style="background:var(--card-bg);border:1px solid var(--border)">
+      <div class="modal-header" style="border-bottom:1px solid var(--border)">
+        <h5 class="modal-title" style="font-weight:700">Add Reminder</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3"><label class="form-label">Title *</label><input type="text" id="remTitle" class="form-control" placeholder="What to do?"/></div>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6"><label class="form-label">Date *</label><input type="date" id="remDate" class="form-control"/></div>
+          <div class="col-md-6">
+            <label class="form-label">Priority</label>
+            <select class="form-select" id="remPriority">
+              <option value="upcoming">Upcoming</option>
+              <option value="today">Today</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Type</label>
+          <select class="form-select" id="remType">
+            <option value="payment">Payment Follow-up</option>
+            <option value="delivery">Delivery</option>
+            <option value="stock">Stock Order</option>
+            <option value="customer">Customer Call</option>
+            <option value="admin">Admin Task</option>
+          </select>
+        </div>
+        <div class="mb-3"><label class="form-label">Notes</label><textarea id="remNote" class="form-control" rows="2" placeholder="Additional details..."></textarea></div>
+      </div>
+      <div class="modal-footer" style="border-top:1px solid var(--border)">
+        <button class="btn btn-outline-custom" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary-custom" onclick="saveReminder()">Save Reminder</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/app.js"></script>
+<script>
+let currentFilter = 'all';
+document.addEventListener('DOMContentLoaded', renderReminders);
+
+function renderReminders() {
+  const container = document.getElementById('remindersContainer');
+  if (!container) return;
+  let reminders = getReminders();
+  if (currentFilter === 'done') reminders = reminders.filter(r => r.done);
+  else if (currentFilter !== 'all') reminders = reminders.filter(r => !r.done && r.priority === currentFilter);
+  else reminders = reminders.filter(r => !r.done);
+
+  if (reminders.length === 0) {
+    container.innerHTML = `<div class="empty-state"><i class="fas fa-bell-slash"></i><h4>No reminders found</h4><p>Add a reminder to stay organized.</p></div>`;
+    return;
+  }
+  const icons = { payment:'fa-rupee-sign', delivery:'fa-truck', stock:'fa-boxes', customer:'fa-user', admin:'fa-cog' };
+  const labels = { payment:'Payment', delivery:'Delivery', stock:'Stock', customer:'Customer', admin:'Admin' };
+  container.innerHTML = reminders.map(r => `
+    <div class="reminder-card rem-${r.priority} ${r.done ? 'opacity-50' : ''}" style="position:relative">
+      <div class="reminder-icon"><i class="fas ${icons[r.type]||'fa-bell'}"></i></div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span style="font-weight:700;font-size:0.95rem;color:var(--text);${r.done?'text-decoration:line-through':''}">${r.title}</span>
+          <span class="filter-chip" style="padding:2px 8px;font-size:0.7rem;pointer-events:none">${labels[r.type]||r.type}</span>
+        </div>
+        <div style="font-size:0.82rem;color:var(--text-muted)">${formatDate(r.date)}</div>
+        ${r.note ? `<div style="font-size:0.82rem;color:var(--text-muted);margin-top:4px">${r.note}</div>` : ''}
+      </div>
+      <div class="d-flex gap-2">
+        ${!r.done ? `<button class="btn btn-sm" style="background:rgba(16,185,129,0.1);color:#10B981;border-radius:6px;padding:4px 10px" onclick="markDone(${r.id})"><i class="fas fa-check"></i></button>` : ''}
+        <button class="btn btn-sm" style="background:rgba(239,68,68,0.1);color:#EF4444;border-radius:6px;padding:4px 10px" onclick="deleteReminder(${r.id})"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterRem(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderReminders();
+}
+
+function markDone(id) {
+  const reminders = getReminders();
+  const r = reminders.find(r => r.id === id);
+  if (r) { r.done = true; saveReminders(reminders); showToast('Reminder marked done!', 'success'); renderReminders(); }
+}
+
+function deleteReminder(id) {
+  const reminders = getReminders().filter(r => r.id !== id);
+  saveReminders(reminders);
+  showToast('Reminder deleted', 'info');
+  renderReminders();
+}
+
+function openAddReminder() {
+  document.getElementById('remDate').value = new Date().toISOString().split('T')[0];
+  new bootstrap.Modal(document.getElementById('addReminderModal')).show();
+}
+
+function saveReminder() {
+  const title = document.getElementById('remTitle')?.value?.trim();
+  const date = document.getElementById('remDate')?.value;
+  if (!title || !date) { showToast('Title and date are required', 'error'); return; }
+  const reminders = getReminders();
+  const newId = reminders.length > 0 ? Math.max(...reminders.map(r => r.id)) + 1 : 1;
+  reminders.push({
+    id: newId,
+    title,
+    type: document.getElementById('remType')?.value || 'admin',
+    date,
+    priority: document.getElementById('remPriority')?.value || 'upcoming',
+    done: false,
+    note: document.getElementById('remNote')?.value || ''
+  });
+  saveReminders(reminders);
+  bootstrap.Modal.getInstance(document.getElementById('addReminderModal')).hide();
+  showToast('Reminder added!', 'success');
+  renderReminders();
+  ['remTitle','remNote'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+}
+window.filterRem = filterRem; window.markDone = markDone; window.deleteReminder = deleteReminder;
+window.openAddReminder = openAddReminder; window.saveReminder = saveReminder;
+</script>
+</body>
+</html>

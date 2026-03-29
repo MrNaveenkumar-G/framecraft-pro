@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Customers - FrameCraft Pro</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand" href="index.html"><span class="brand-icon"><i class="fas fa-border-all"></i></span><span class="brand-text">Frame<strong>Craft</strong></span></a>
+    <div class="d-flex align-items-center gap-3 ms-auto">
+      <button class="btn btn-theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon" id="themeIcon"></i></button>
+      <div class="nav-profile" onclick="window.location='settings.html'"><img src="" id="navAvatar" class="nav-avatar" alt=""/><span id="navUserName">User</span></div>
+    </div>
+  </div>
+</nav>
+<div class="dashboard-layout">
+  <aside class="sidebar">
+    <div class="sidebar-section-label">Main</div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="invoice.html"><i class="fas fa-file-invoice"></i> New Invoice</a></li>
+      <li><a href="invoice-history.html"><i class="fas fa-history"></i> Invoice History</a></li>
+      <li><a href="customers.html" class="active"><i class="fas fa-users"></i> Customers</a></li>
+      <li><a href="products.html"><i class="fas fa-th-large"></i> Products</a></li>
+    </ul>
+    <div class="sidebar-section-label">Tools</div>
+    <ul class="sidebar-menu">
+      <li><a href="reminders.html"><i class="fas fa-bell"></i> Reminders</a></li>
+      <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+    </ul>
+  </aside>
+  <main class="main-content">
+    <div class="page-header">
+      <div class="d-flex align-items-center">
+        <div class="page-header-icon"><i class="fas fa-users"></i></div>
+        <div><h2>Customers</h2><p>Manage your customer relationships</p></div>
+      </div>
+      <button class="btn btn-primary-custom" onclick="openAddCustomer()"><i class="fas fa-user-plus me-2"></i>Add Customer</button>
+    </div>
+
+    <!-- Search -->
+    <div class="chart-card mb-4">
+      <div class="search-bar"><i class="fas fa-search"></i><input type="text" class="form-control" id="searchCust" placeholder="Search customers..." oninput="renderCustomers()"/></div>
+    </div>
+
+    <div class="row g-3" id="customersGrid"></div>
+  </main>
+</div>
+
+<!-- Add Customer Modal -->
+<div class="modal fade" id="addCustomerModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" style="background:var(--card-bg);border:1px solid var(--border)">
+      <div class="modal-header" style="border-bottom:1px solid var(--border)">
+        <h5 class="modal-title" style="font-weight:700" id="custModalTitle">Add Customer</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editCustId"/>
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label">Name *</label><input type="text" id="custName" class="form-control"/></div>
+          <div class="col-md-6"><label class="form-label">Phone</label><input type="tel" id="custPhone" class="form-control"/></div>
+          <div class="col-md-6"><label class="form-label">Email</label><input type="email" id="custEmail" class="form-control"/></div>
+          <div class="col-md-6"><label class="form-label">City</label><input type="text" id="custCity" class="form-control"/></div>
+          <div class="col-12"><label class="form-label">Notes</label><textarea id="custNotes" class="form-control" rows="2"></textarea></div>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top:1px solid var(--border)">
+        <button class="btn btn-outline-custom" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary-custom" onclick="saveCustomerForm()">Save Customer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', renderCustomers);
+
+function renderCustomers() {
+  const search = document.getElementById('searchCust')?.value.toLowerCase() || '';
+  let customers = getCustomers();
+  if (search) customers = customers.filter(c => c.name.toLowerCase().includes(search) || (c.phone && c.phone.includes(search)) || (c.city && c.city.toLowerCase().includes(search)));
+  const grid = document.getElementById('customersGrid');
+  if (!grid) return;
+  if (customers.length === 0) {
+    grid.innerHTML = `<div class="col-12"><div class="empty-state"><i class="fas fa-users"></i><h4>No customers found</h4><p>Add your first customer to get started.</p></div></div>`;
+    return;
+  }
+  grid.innerHTML = customers.map(c => `
+    <div class="col-sm-6 col-md-4 col-lg-3">
+      <div class="customer-card">
+        <div class="d-flex align-items-start gap-3 mb-3">
+          <div class="customer-avatar">${getInitials(c.name)}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:700;font-size:0.95rem;color:var(--text)">${c.name}</div>
+            <div style="font-size:0.8rem;color:var(--text-muted)">${c.city || ''}</div>
+          </div>
+        </div>
+        ${c.phone ? `<div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:4px"><i class="fas fa-phone me-2" style="color:var(--primary)"></i>${c.phone}</div>` : ''}
+        ${c.email ? `<div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:4px"><i class="fas fa-envelope me-2" style="color:var(--primary)"></i>${c.email}</div>` : ''}
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:8px">
+          <span style="font-size:0.78rem;color:var(--text-muted)"><strong style="color:var(--text)">${c.totalOrders||0}</strong> orders</span>
+          <span style="font-size:0.78rem;color:var(--text-muted);margin-left:auto"><strong style="color:var(--primary)">${formatCurrency(c.totalSpent||0)}</strong></span>
+        </div>
+        <div class="d-flex gap-2 mt-2">
+          <button class="btn btn-sm flex-fill" style="background:rgba(200,134,10,0.1);color:var(--primary);border-radius:6px;font-size:0.78rem;font-weight:600" onclick="window.location='invoice.html'"><i class="fas fa-file-invoice me-1"></i>Invoice</button>
+          <button class="btn btn-sm" style="background:rgba(59,130,246,0.1);color:#3B82F6;border-radius:6px;padding:4px 8px" onclick="editCustomer(${c.id})"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-sm" style="background:rgba(239,68,68,0.1);color:#EF4444;border-radius:6px;padding:4px 8px" onclick="deleteCustomer(${c.id})"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openAddCustomer() {
+  document.getElementById('custModalTitle').textContent = 'Add Customer';
+  document.getElementById('editCustId').value = '';
+  ['custName','custPhone','custEmail','custCity','custNotes'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+  new bootstrap.Modal(document.getElementById('addCustomerModal')).show();
+}
+
+function editCustomer(id) {
+  const c = getCustomers().find(c => c.id === id);
+  if (!c) return;
+  document.getElementById('custModalTitle').textContent = 'Edit Customer';
+  document.getElementById('editCustId').value = id;
+  const set = (eid, val) => { const el = document.getElementById(eid); if(el) el.value = val||''; };
+  set('custName', c.name); set('custPhone', c.phone); set('custEmail', c.email); set('custCity', c.city); set('custNotes', c.notes);
+  new bootstrap.Modal(document.getElementById('addCustomerModal')).show();
+}
+
+function saveCustomerForm() {
+  const name = document.getElementById('custName')?.value?.trim();
+  if (!name) { showToast('Customer name required', 'error'); return; }
+  const customers = getCustomers();
+  const editId = document.getElementById('editCustId')?.value;
+  const custData = {
+    name, phone: document.getElementById('custPhone')?.value||'',
+    email: document.getElementById('custEmail')?.value||'',
+    city: document.getElementById('custCity')?.value||'',
+    notes: document.getElementById('custNotes')?.value||'',
+    totalOrders: 0, totalSpent: 0
+  };
+  if (editId) {
+    const idx = customers.findIndex(c => c.id == editId);
+    if (idx >= 0) { custData.id = customers[idx].id; custData.totalOrders = customers[idx].totalOrders; custData.totalSpent = customers[idx].totalSpent; customers[idx] = custData; }
+  } else {
+    custData.id = customers.length > 0 ? Math.max(...customers.map(c=>c.id))+1 : 1;
+    customers.push(custData);
+  }
+  saveCustomers(customers);
+  bootstrap.Modal.getInstance(document.getElementById('addCustomerModal')).hide();
+  showToast(editId ? 'Customer updated!' : 'Customer added!', 'success');
+  renderCustomers();
+}
+
+function deleteCustomer(id) {
+  if (!confirm('Delete this customer?')) return;
+  saveCustomers(getCustomers().filter(c => c.id !== id));
+  showToast('Customer deleted', 'info');
+  renderCustomers();
+}
+window.renderCustomers = renderCustomers; window.openAddCustomer = openAddCustomer;
+window.editCustomer = editCustomer; window.saveCustomerForm = saveCustomerForm; window.deleteCustomer = deleteCustomer;
+</script>
+</body>
+</html>

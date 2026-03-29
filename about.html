@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Us - FrameCraft Pro</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="index.html">
+      <span class="brand-icon"><i class="fas fa-border-all"></i></span>
+      <span class="brand-text">Frame<strong>Craft</strong></span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto align-items-center gap-2">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="products.html">Products</a></li>
+        <li class="nav-item"><a class="nav-link active" href="about.html">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+        <li class="nav-item">
+          <button class="btn btn-theme-toggle ms-2" onclick="toggleTheme()">
+            <i class="fas fa-moon" id="themeIcon"></i>
+          </button>
+        </li>
+        <li class="nav-item">
+          <div class="nav-profile" onclick="window.location='settings.html'">
+            <img src="" id="navAvatar" class="nav-avatar" alt=""/>
+            <span id="navUserName">User</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- About Hero -->
+<section class="about-hero" style="padding-top:120px;padding-bottom:80px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:white;text-align:center">
+  <div class="container">
+    <div class="section-tag" style="background:rgba(255,255,255,0.15);color:white;margin-bottom:16px">Our Story</div>
+    <h1 style="font-family:var(--font-display);font-size:clamp(2rem,5vw,3.5rem);font-weight:900;margin-bottom:16px">Crafting Memories<br>Since 2017</h1>
+    <p style="font-size:1.1rem;opacity:0.9;max-width:580px;margin:0 auto;line-height:1.7">We believe every photograph deserves a frame as beautiful as the moment it captures. Premium quality, handcrafted with love in Coimbatore.</p>
+  </div>
+</section>
+
+<!-- Story Section -->
+<section class="py-5" style="background:var(--bg)">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <div class="section-tag">Who We Are</div>
+        <h2 class="section-title mt-2 mb-4">More Than Just a Frame Shop</h2>
+        <p style="color:var(--text-muted);line-height:1.8;margin-bottom:16px">
+          FrameCraft Pro started as a small workshop in Coimbatore with a single belief — that memories deserve to be displayed beautifully. What began as a passion project quickly grew into one of Tamil Nadu's most trusted photo frame businesses.
+        </p>
+        <p style="color:var(--text-muted);line-height:1.8;margin-bottom:16px">
+          From wedding albums to baby moments, office certificates to family portraits — we craft frames that complement every photo. Our skilled artisans work with premium wood, metal, and glass to deliver frames that last a lifetime.
+        </p>
+        <p style="color:var(--text-muted);line-height:1.8">
+          Today, we serve over 1,200 happy customers across Tamil Nadu with same-day delivery in Coimbatore and shipping across India.
+        </p>
+        <div class="d-flex gap-4 mt-4">
+          <div>
+            <div style="font-family:var(--font-display);font-size:2rem;font-weight:700;color:var(--primary)">8+</div>
+            <div style="font-size:0.85rem;color:var(--text-muted)">Years Experience</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-display);font-size:2rem;font-weight:700;color:var(--primary)">1200+</div>
+            <div style="font-size:0.85rem;color:var(--text-muted)">Happy Customers</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-display);font-size:2rem;font-weight:700;color:var(--primary)">50+</div>
+            <div style="font-size:0.85rem;color:var(--text-muted)">Frame Styles</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="row g-3">
+          <div class="col-6">
+            <div style="background:linear-gradient(135deg,#C8860A,#E8A020);border-radius:20px;padding:32px;color:white;text-align:center">
+              <i class="fas fa-award fa-2x mb-3"></i>
+              <div style="font-weight:700;font-size:1rem">Best Quality</div>
+              <div style="font-size:0.82rem;opacity:0.85;margin-top:4px">Premium materials only</div>
+            </div>
+          </div>
+          <div class="col-6" style="margin-top:24px">
+            <div style="background:linear-gradient(135deg,#2563EB,#60A5FA);border-radius:20px;padding:32px;color:white;text-align:center">
+              <i class="fas fa-truck fa-2x mb-3"></i>
+              <div style="font-weight:700;font-size:1rem">Fast Delivery</div>
+              <div style="font-size:0.82rem;opacity:0.85;margin-top:4px">Same-day in city</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div style="background:linear-gradient(135deg,#7C3AED,#A78BFA);border-radius:20px;padding:32px;color:white;text-align:center">
+              <i class="fas fa-palette fa-2x mb-3"></i>
+              <div style="font-weight:700;font-size:1rem">Custom Designs</div>
+              <div style="font-size:0.82rem;opacity:0.85;margin-top:4px">Your vision, our craft</div>
+            </div>
+          </div>
+          <div class="col-6" style="margin-top:24px">
+            <div style="background:linear-gradient(135deg,#059669,#34D399);border-radius:20px;padding:32px;color:white;text-align:center">
+              <i class="fas fa-leaf fa-2x mb-3"></i>
+              <div style="font-weight:700;font-size:1rem">Eco Friendly</div>
+              <div style="font-size:0.82rem;opacity:0.85;margin-top:4px">Sustainable sourcing</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Our Values -->
+<section class="py-5" style="background:var(--bg2)">
+  <div class="container">
+    <div class="section-header text-center mb-5">
+      <div class="section-tag">Our Values</div>
+      <h2 class="section-title">What Drives Us Every Day</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="feature-card text-center">
+          <div class="feature-icon"><i class="fas fa-heart"></i></div>
+          <h5>Passion for Craft</h5>
+          <p>Every frame is made with genuine care and attention to detail. We treat each order as if it's for our own family.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card text-center">
+          <div class="feature-icon"><i class="fas fa-handshake"></i></div>
+          <h5>Customer First</h5>
+          <p>Your satisfaction is our priority. We go the extra mile to ensure you're delighted with every purchase.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card text-center">
+          <div class="feature-icon"><i class="fas fa-star"></i></div>
+          <h5>Unmatched Quality</h5>
+          <p>We never compromise on materials. Every frame undergoes strict quality checks before reaching your hands.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Team -->
+<section class="py-5" style="background:var(--bg)">
+  <div class="container">
+    <div class="section-header text-center mb-5">
+      <div class="section-tag">The Team</div>
+      <h2 class="section-title">Meet the People Behind the Frames</h2>
+    </div>
+    <div class="row g-4 justify-content-center" id="teamCards">
+      <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="team-card">
+          <div class="team-avatar">R</div>
+          <h6 style="font-weight:700;margin-bottom:4px">Rajan Kumar</h6>
+          <div style="font-size:0.82rem;color:var(--primary);font-weight:600;margin-bottom:8px">Founder & CEO</div>
+          <p style="font-size:0.82rem;color:var(--text-muted)">15 years experience in woodworking and frame design. The creative force behind FrameCraft.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="team-card">
+          <div class="team-avatar" style="background:linear-gradient(135deg,#DB2777,#F9A8D4)">P</div>
+          <h6 style="font-weight:700;margin-bottom:4px">Preethi Raj</h6>
+          <div style="font-size:0.82rem;color:var(--primary);font-weight:600;margin-bottom:8px">Design Head</div>
+          <p style="font-size:0.82rem;color:var(--text-muted)">Expert in color theory and frame aesthetics. Ensures every product is visually stunning.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="team-card">
+          <div class="team-avatar" style="background:linear-gradient(135deg,#2563EB,#60A5FA)">K</div>
+          <h6 style="font-weight:700;margin-bottom:4px">Karthik S</h6>
+          <div style="font-size:0.82rem;color:var(--primary);font-weight:600;margin-bottom:8px">Operations Manager</div>
+          <p style="font-size:0.82rem;color:var(--text-muted)">Manages delivery, inventory and customer relations with military precision.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="team-card">
+          <div class="team-avatar" style="background:linear-gradient(135deg,#059669,#34D399)">M</div>
+          <h6 style="font-weight:700;margin-bottom:4px">Meena Devi</h6>
+          <div style="font-size:0.82rem;color:var(--primary);font-weight:600;margin-bottom:8px">Master Craftsperson</div>
+          <p style="font-size:0.82rem;color:var(--text-muted)">20+ years of frame crafting expertise. Trains our entire workshop team.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-5" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:white;text-align:center">
+  <div class="container">
+    <h2 style="font-family:var(--font-display);font-size:2.2rem;font-weight:700;margin-bottom:12px">Ready to Frame Your Memories?</h2>
+    <p style="opacity:0.9;font-size:1.05rem;margin-bottom:28px">Browse our collection or get in touch for custom orders.</p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <a href="products.html" class="btn btn-lg" style="background:white;color:var(--primary);font-weight:700;border-radius:12px;padding:12px 28px">Browse Products</a>
+      <a href="contact.html" class="btn btn-lg" style="background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.4);font-weight:700;border-radius:12px;padding:12px 28px">Contact Us</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="site-footer py-5">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="footer-brand">
+          <span class="brand-icon"><i class="fas fa-border-all"></i></span>
+          <span class="brand-text">Frame<strong>Craft</strong></span>
+        </div>
+        <p class="mt-3">Premium photo frames crafted with passion.</p>
+        <div class="social-links mt-3">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <h6 class="footer-heading">Quick Links</h6>
+        <ul class="footer-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html">Products</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <h6 class="footer-heading">Contact</h6>
+        <ul class="footer-links">
+          <li><i class="fas fa-map-marker-alt me-2"></i><span id="footerAddress">Coimbatore, Tamil Nadu</span></li>
+          <li><i class="fas fa-phone me-2"></i><span id="footerPhone">+91 98765 43210</span></li>
+          <li><i class="fas fa-envelope me-2"></i><span id="footerEmail">hello@framecraft.com</span></li>
+        </ul>
+      </div>
+    </div>
+    <hr class="footer-divider mt-4"/>
+    <div class="text-center"><small>&copy; 2025 FrameCraft Pro. All rights reserved.</small></div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
