@@ -245,94 +245,209 @@ function saveAndPrint() {
   openPrintWindow(inv);
 }
 
+function numberToWords(n) {
+  const ones = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+  const tens = ['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  if (n === 0) return 'Zero';
+  if (n < 0) return 'Minus ' + numberToWords(-n);
+  let words = '';
+  if (Math.floor(n/10000000) > 0) { words += numberToWords(Math.floor(n/10000000)) + ' Crore '; n %= 10000000; }
+  if (Math.floor(n/100000) > 0) { words += numberToWords(Math.floor(n/100000)) + ' Lakh '; n %= 100000; }
+  if (Math.floor(n/1000) > 0) { words += numberToWords(Math.floor(n/1000)) + ' Thousand '; n %= 1000; }
+  if (Math.floor(n/100) > 0) { words += numberToWords(Math.floor(n/100)) + ' Hundred '; n %= 100; }
+  if (n > 0) { if (words !== '') words += 'and '; if (n < 20) words += ones[n]; else { words += tens[Math.floor(n/10)]; if (n%10 > 0) words += ' ' + ones[n%10]; } }
+  return words.trim();
+}
+
 function openPrintWindow(inv) {
   const s = getSettings();
-  const printHTML = `<!DOCTYPE html><html><head><title>${inv.id} - Invoice</title>
+  const totalRounded = Math.round(inv.total);
+  const roundOff = totalRounded - inv.total;
+  const amountWords = numberToWords(totalRounded) + ' Only.';
+
+  const printHTML = `<!DOCTYPE html><html><head><title>${inv.id}</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'DM Sans',sans-serif;color:#1A1A1A;background:white;padding:40px}
-    .inv-header{background:linear-gradient(135deg,#C8860A,#E8A020);color:white;padding:32px;border-radius:16px;margin-bottom:32px;display:flex;justify-content:space-between;align-items:flex-start}
-    .inv-num{font-size:0.8rem;opacity:0.8;margin-bottom:4px}
-    .inv-title{font-size:2rem;font-weight:800}
-    .inv-biz{opacity:0.85;margin-top:4px}
-    .inv-dates{text-align:right;font-size:0.85rem}
-    .section{margin-bottom:24px}
-    .section-title{font-weight:700;font-size:0.85rem;letter-spacing:1px;text-transform:uppercase;color:#9A6508;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #F2EDE4}
-    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-    .info-item .label{font-size:0.75rem;color:#666;margin-bottom:2px}
-    .info-item .value{font-weight:600;font-size:0.9rem}
-    table{width:100%;border-collapse:collapse;margin-top:12px}
-    th{background:#F2EDE4;padding:10px 12px;text-align:left;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#666}
-    td{padding:12px;border-bottom:1px solid #F0EDE4;font-size:0.88rem}
-    tr:last-child td{border-bottom:none}
-    .totals{margin-left:auto;width:280px;margin-top:24px;background:#F2EDE4;border-radius:12px;padding:20px}
-    .total-row{display:flex;justify-content:space-between;padding:4px 0;font-size:0.88rem;color:#666}
-    .grand-row{display:flex;justify-content:space-between;padding:10px 0 0;margin-top:8px;border-top:2px solid #E0D9CE;font-weight:800;font-size:1.1rem}
-    .grand-row .amount{color:#C8860A}
-    .footer{margin-top:40px;text-align:center;font-size:0.8rem;color:#999;border-top:1px solid #eee;padding-top:20px}
-    .notes-box{background:#FAFAF8;border:1px solid #E0D9CE;border-radius:8px;padding:16px;font-size:0.85rem;color:#666;margin-top:12px}
-    .badge{display:inline-block;padding:4px 12px;border-radius:40px;font-size:0.72rem;font-weight:700;text-transform:uppercase}
-    .paid{background:rgba(16,185,129,0.12);color:#10B981}
-    .pending{background:rgba(245,158,11,0.12);color:#F59E0B}
-    @media print{body{padding:20px}@page{margin:15mm}}
+    body{font-family:Arial,sans-serif;color:#1A1A1A;background:white;font-size:12px}
+    .page{width:210mm;min-height:297mm;margin:0 auto;padding:12mm 14mm;position:relative}
+    /* Header */
+    .inv-header-bar{background:#e8f0f7;padding:6px 12px;text-align:center;font-size:16px;font-weight:700;letter-spacing:1px;margin-bottom:12px;border:1px solid #ccc}
+    .biz-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;padding-bottom:10px;border-bottom:2px solid #333}
+    .biz-logo{width:70px;height:70px;background:#1a1a1a;border-radius:4px;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:22px;flex-shrink:0}
+    .biz-logo img{width:100%;height:100%;object-fit:cover;border-radius:4px}
+    .biz-info{flex:1;padding:0 12px}
+    .biz-name{font-size:18px;font-weight:800;color:#1a1a1a}
+    .biz-state{font-size:11px;color:#555;margin-top:2px}
+    .inv-meta{text-align:right;font-size:11px}
+    .inv-meta div{margin-bottom:3px}
+    .inv-meta strong{font-size:12px}
+    /* Bill To */
+    .bill-section{margin-bottom:10px;padding:8px 10px;border:1px solid #ccc;border-radius:4px;background:#fafafa}
+    .bill-label{font-size:10px;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+    .bill-name{font-size:13px;font-weight:800;color:#1a1a1a}
+    .bill-addr{font-size:11px;color:#444;margin-top:2px;line-height:1.5}
+    .bill-phone{font-size:11px;color:#444;margin-top:3px}
+    /* Items Table */
+    table{width:100%;border-collapse:collapse;margin-bottom:0}
+    table th{background:#2c3e50;color:white;padding:7px 8px;font-size:11px;font-weight:700;text-align:center;border:1px solid #2c3e50}
+    table th:first-child,table th:nth-child(2){text-align:left}
+    table td{padding:7px 8px;border:1px solid #ddd;font-size:11px;vertical-align:top}
+    table td:first-child{text-align:center;width:30px}
+    table td:nth-child(3),table td:nth-child(4),table td:nth-child(5),table td:nth-child(6),table td:nth-child(7){text-align:center}
+    table td:last-child{text-align:right;font-weight:600}
+    table tbody tr:nth-child(even){background:#f9f9f9}
+    .total-row-table td{background:#f0f0f0;font-weight:700;border:1px solid #ccc}
+    /* Amount Summary */
+    .summary-section{display:flex;justify-content:space-between;align-items:flex-start;margin-top:10px;border:1px solid #ccc;border-radius:4px;overflow:hidden}
+    .words-box{flex:1;padding:10px 12px;background:#fafafa;border-right:1px solid #ccc}
+    .words-label{font-size:10px;font-weight:700;color:#666;text-transform:uppercase;margin-bottom:4px}
+    .words-value{font-size:12px;font-weight:700;color:#1a1a1a;line-height:1.4}
+    .amount-box{width:280px;padding:10px 12px}
+    .amt-row{display:flex;justify-content:space-between;padding:3px 0;font-size:11px;border-bottom:1px dashed #eee}
+    .amt-row:last-child{border-bottom:none;padding-top:6px;margin-top:4px;border-top:2px solid #333;font-size:13px;font-weight:800}
+    .amt-row span:last-child{font-weight:600;text-align:right}
+    /* Terms */
+    .terms-section{margin-top:10px;padding:8px 10px;border:1px solid #ccc;border-radius:4px;background:#fafafa}
+    .terms-title{font-size:11px;font-weight:800;margin-bottom:6px;color:#1a1a1a}
+    .terms-section ol{padding-left:16px}
+    .terms-section ol li{font-size:10px;color:#444;margin-bottom:3px;line-height:1.4}
+    /* Payment & Sign */
+    .footer-section{display:flex;justify-content:space-between;align-items:flex-end;margin-top:12px;padding-top:10px;border-top:1px solid #ddd}
+    .upi-box{display:flex;align-items:flex-start;gap:10px}
+    .upi-qr{width:70px;height:70px;background:#1a1a1a;border-radius:4px;display:flex;align-items:center;justify-content:center;color:white;font-size:8px;text-align:center;padding:4px}
+    .upi-details{font-size:10px;color:#333;line-height:1.7}
+    .upi-details strong{font-size:11px}
+    .sign-box{text-align:right}
+    .sign-company{font-size:11px;font-weight:700;margin-bottom:30px}
+    .sign-line{border-top:1px solid #333;width:160px;margin-left:auto;padding-top:4px;font-size:10px;color:#666;text-align:center}
+    .computer-gen{text-align:center;font-size:10px;color:#888;margin-top:12px;font-style:italic;border-top:1px solid #eee;padding-top:8px}
+    @media print{body{margin:0}@page{size:A4;margin:10mm}.page{padding:8mm 10mm;width:100%}}
   </style></head><body>
-  <div class="inv-header">
-    <div>
-      <div class="inv-num">INVOICE NUMBER</div>
-      <div class="inv-title">${inv.id}</div>
-      <div class="inv-biz">${s.businessName}</div>
+  <div class="page">
+    <!-- Header -->
+    <div class="inv-header-bar">Invoice</div>
+
+    <!-- Business Info Row -->
+    <div class="biz-row">
+      <div class="biz-logo">
+        ${s.avatar ? `<img src="${s.avatar}" alt="Logo"/>` : `<span>${(s.businessName||'FC').slice(0,2).toUpperCase()}</span>`}
+      </div>
+      <div class="biz-info">
+        <div class="biz-name">${s.businessName || 'FrameCraft Pro'}</div>
+        <div class="biz-state">${s.address || 'Tamil Nadu'}</div>
+        ${s.gst ? `<div style="font-size:10px;color:#555;margin-top:2px">GSTIN: ${s.gst}</div>` : ''}
+      </div>
+      <div class="inv-meta">
+        <div><strong>Invoice No: ${inv.id}</strong></div>
+        <div>Date of Invoice: ${formatDate(inv.date)}</div>
+        ${inv.dueDate ? `<div>Due Date: ${formatDate(inv.dueDate)}</div>` : ''}
+        <div style="margin-top:4px">Payment: ${inv.paymentMethod || 'Cash'}</div>
+      </div>
     </div>
-    <div class="inv-dates">
-      <div><strong>Date:</strong> ${formatDate(inv.date)}</div>
-      <div style="margin-top:4px"><strong>Due:</strong> ${formatDate(inv.dueDate)}</div>
-      <div style="margin-top:8px"><span class="badge ${inv.status}">${inv.status.toUpperCase()}</span></div>
+
+    <!-- Bill To -->
+    <div class="bill-section">
+      <div class="bill-label">Bill To</div>
+      <div class="bill-name">${inv.customer.toUpperCase()}</div>
+      ${inv.address ? `<div class="bill-addr">${inv.address}</div>` : ''}
+      ${inv.phone ? `<div class="bill-phone">Ph: ${inv.phone}</div>` : ''}
+      ${inv.email ? `<div class="bill-phone">Email: ${inv.email}</div>` : ''}
     </div>
-  </div>
-  <div class="info-grid" style="margin-bottom:24px">
-    <div class="section">
-      <div class="section-title">Bill To</div>
-      <div class="info-item"><div class="label">Customer Name</div><div class="value">${inv.customer}</div></div>
-      ${inv.phone ? `<div class="info-item" style="margin-top:8px"><div class="label">Phone</div><div class="value">${inv.phone}</div></div>` : ''}
-      ${inv.email ? `<div class="info-item" style="margin-top:8px"><div class="label">Email</div><div class="value">${inv.email}</div></div>` : ''}
-      ${inv.address ? `<div class="info-item" style="margin-top:8px"><div class="label">Address</div><div class="value">${inv.address}</div></div>` : ''}
-    </div>
-    <div class="section">
-      <div class="section-title">From</div>
-      <div class="info-item"><div class="label">Business</div><div class="value">${s.businessName}</div></div>
-      <div class="info-item" style="margin-top:8px"><div class="label">Phone</div><div class="value">${s.phone}</div></div>
-      <div class="info-item" style="margin-top:8px"><div class="label">Email</div><div class="value">${s.email}</div></div>
-      ${s.gst ? `<div class="info-item" style="margin-top:8px"><div class="label">GST No.</div><div class="value">${s.gst}</div></div>` : ''}
-      <div class="info-item" style="margin-top:8px"><div class="label">Payment</div><div class="value">${inv.paymentMethod || 'Cash'}</div></div>
-    </div>
-  </div>
-  <div class="section">
-    <div class="section-title">Items</div>
+
+    <!-- Items Table -->
     <table>
-      <thead><tr><th>#</th><th>Description</th><th>Size</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Description</th>
+          <th>Qty</th>
+          <th>Unit</th>
+          <th>Rate</th>
+          ${inv.discount > 0 ? '<th>Discount</th><th>Taxable Rate</th>' : ''}
+          <th>Total</th>
+        </tr>
+      </thead>
       <tbody>
-        ${inv.items.map((item, i) => `
-          <tr>
+        ${inv.items.map((item, i) => {
+          const lineTotal = item.qty * item.price;
+          return `<tr>
             <td>${i+1}</td>
-            <td><strong>${item.name}</strong></td>
-            <td>${item.size || '-'}</td>
+            <td><strong>${item.name}</strong>${item.size ? `<br><em style="font-size:10px;color:#666">${item.size}</em>` : ''}</td>
             <td>${item.qty}</td>
-            <td>${formatCurrency(item.price)}</td>
-            <td><strong>${formatCurrency(item.qty * item.price)}</strong></td>
-          </tr>
-        `).join('')}
+            <td>${item.unit || 'Pcs'}</td>
+            <td>${item.price.toFixed(2)}</td>
+            ${inv.discount > 0 ? `<td>${inv.discountPct||0}%</td><td>${(item.price*(1-(inv.discountPct||0)/100)).toFixed(2)}</td>` : ''}
+            <td>${lineTotal.toFixed(2)}</td>
+          </tr>`;
+        }).join('')}
+        <tr class="total-row-table">
+          <td colspan="${inv.discount > 0 ? 4 : 4}" style="text-align:left;font-weight:700">Total (₹)</td>
+          <td style="text-align:center;font-weight:700">${inv.items.reduce((s,i)=>s+i.qty,0)}</td>
+          ${inv.discount > 0 ? '<td></td><td></td>' : ''}
+          <td style="text-align:right;font-weight:800">${(inv.subtotal||inv.total).toFixed(2)}</td>
+        </tr>
       </tbody>
     </table>
-  </div>
-  <div class="totals">
-    <div class="total-row"><span>Subtotal</span><span>${formatCurrency(inv.subtotal)}</span></div>
-    ${inv.discount > 0 ? `<div class="total-row"><span>Discount</span><span style="color:#10B981">- ${formatCurrency(inv.discount)}</span></div>` : ''}
-    ${inv.gst > 0 ? `<div class="total-row"><span>GST</span><span>${formatCurrency(inv.gst)}</span></div>` : ''}
-    <div class="grand-row"><span>Grand Total</span><span class="amount">${formatCurrency(inv.total)}</span></div>
-  </div>
-  ${inv.notes ? `<div class="section" style="margin-top:24px"><div class="section-title">Notes & Terms</div><div class="notes-box">${inv.notes}</div></div>` : ''}
-  <div class="footer">
-    <strong>${s.businessName}</strong> • ${s.phone} • ${s.email} • ${s.address}<br/>
-    Thank you for your business! 🖼️
+
+    <!-- Amount Summary -->
+    <div class="summary-section">
+      <div class="words-box">
+        <div class="words-label">Total amount (in words)</div>
+        <div class="words-value">${amountWords}</div>
+      </div>
+      <div class="amount-box">
+        <div class="amt-row"><span>Subtotal (₹):</span><span>${(inv.subtotal||inv.total).toFixed(2)}</span></div>
+        ${inv.discount > 0 ? `<div class="amt-row"><span>Discount (₹):</span><span>-${inv.discount.toFixed(2)}</span></div>` : ''}
+        ${inv.gst > 0 ? `<div class="amt-row"><span>GST (₹):</span><span>${inv.gst.toFixed(2)}</span></div>` : ''}
+        ${Math.abs(roundOff) > 0 ? `<div class="amt-row"><span>Round Off (₹):</span><span>${roundOff > 0 ? '+' : ''}${roundOff.toFixed(2)}</span></div>` : ''}
+        <div class="amt-row"><span>Total Amount (₹):</span><span>${totalRounded.toFixed(2)}</span></div>
+        <div class="amt-row"><span style="font-weight:800">Remaining Amount (₹):</span><span style="color:#C8860A">${totalRounded.toFixed(2)}</span></div>
+      </div>
+    </div>
+
+    <!-- Terms -->
+    ${inv.notes ? `
+    <div class="terms-section">
+      <div class="terms-title">Terms:</div>
+      <ol>
+        ${inv.notes.split('\n').filter(Boolean).map(t => `<li>${t}</li>`).join('')}
+        <li>For Feedback/Complaints, Call: ${s.phone} | Email: ${s.email}${s.website ? ` | ${s.website}` : ''}</li>
+      </ol>
+    </div>` : `
+    <div class="terms-section">
+      <div class="terms-title">Terms:</div>
+      <ol>
+        <li>All disputes are subject to company Jurisdiction.</li>
+        <li>Certified that the particular items given above are true and correct.</li>
+        <li>For Feedback/Complaints, Call: ${s.phone} | Email: ${s.email}</li>
+      </ol>
+    </div>`}
+
+    <!-- Footer: UPI + Signature -->
+    <div class="footer-section">
+      <div class="upi-box">
+        ${s.upiId ? `
+        <div class="upi-qr">QR<br/>Code</div>
+        <div class="upi-details">
+          <div>Scan &amp; Pay using any UPI app</div>
+          <div><strong>UPI ID: ${s.upiId}</strong></div>
+          <div>UPI Name: ${s.businessName}</div>
+          ${s.bank ? `<div><strong>Bank: ${s.bank}</strong></div>` : ''}
+          ${s.bankBranch ? `<div>Branch: ${s.bankBranch}</div>` : ''}
+        </div>` : `
+        <div class="upi-details">
+          <div><strong>${s.businessName}</strong></div>
+          <div>${s.phone}</div>
+          <div>${s.email}</div>
+        </div>`}
+      </div>
+      <div class="sign-box">
+        <div class="sign-company">For ${s.businessName}</div>
+        <div class="sign-line">Authorised Signatory</div>
+      </div>
+    </div>
+
+    <div class="computer-gen">This is a Computer Generated Invoice.</div>
   </div>
   <script>window.onload = () => { window.print(); }<\/script>
   </body></html>`;
