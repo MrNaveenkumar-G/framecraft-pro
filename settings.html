@@ -102,6 +102,17 @@
             </div>
           </div>
         </div>
+
+        <!-- UPI &amp; Bank Details -->
+        <div class="settings-section">
+          <h5><i class="fas fa-university me-2" style="color:var(--primary)"></i>UPI &amp; Bank Details <small style="font-size:0.78rem;color:var(--text-muted);font-weight:400">(shown on printed invoice)</small></h5>
+          <div class="row g-3">
+            <div class="col-md-6"><label class="form-label">UPI ID</label><input type="text" id="settUpiId" class="form-control" placeholder="yourshop@sbi"/></div>
+            <div class="col-md-6"><label class="form-label">UPI Name</label><input type="text" id="settUpiName" class="form-control" placeholder="YOUR SHOP NAME"/></div>
+            <div class="col-md-6"><label class="form-label">Bank Name</label><input type="text" id="settBank" class="form-control" placeholder="STATE BANK OF INDIA"/></div>
+            <div class="col-md-6"><label class="form-label">Branch Name</label><input type="text" id="settBankBranch" class="form-control" placeholder="TRICHY ROAD BRANCH"/></div>
+          </div>
+        </div>
       </div>
 
       <!-- Right Panel -->
@@ -253,6 +264,10 @@ function saveAllSettings() {
   s.instagram = get('settInstagram');
   s.facebook = get('settFacebook');
   s.website = get('settWebsite');
+  s.upiId = get('settUpiId');
+  s.upiName = get('settUpiName');
+  s.bank = get('settBank');
+  s.bankBranch = get('settBankBranch');
   s.invoiceNotes = get('settInvNotes');
   saveSettings(s);
   setupNavbar();
