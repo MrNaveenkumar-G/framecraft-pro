@@ -11,7 +11,8 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
-  <div class="container-fluid px-4">
+  <div class="container-fluid px-4 d-flex align-items-center gap-2">
+    <button class="mobile-sidebar-toggle d-lg-none" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
     <a class="navbar-brand" href="index.html"><span class="brand-icon"><i class="fas fa-border-all"></i></span><span class="brand-text">Frame<strong>Craft</strong></span></a>
     <div class="d-flex align-items-center gap-3 ms-auto">
       <button class="btn btn-theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon" id="themeIcon"></i></button>
@@ -20,7 +21,8 @@
   </div>
 </nav>
 <div class="dashboard-layout">
-  <aside class="sidebar">
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
     <div class="sidebar-section-label">Main</div>
     <ul class="sidebar-menu">
       <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
