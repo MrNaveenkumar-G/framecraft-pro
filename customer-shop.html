@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shop - FrameCraft Pro</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    .shop-header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white; padding: 80px 0 40px; text-align: center;
+    }
+    .shop-title { font-family: var(--font-display); font-size: clamp(1.8rem,4vw,3rem); font-weight:900; }
+    .customer-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.15);
+      padding: 6px 16px; border-radius: 40px;
+      font-size: 0.85rem; font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .shop-navbar {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 60px; background: rgba(250,250,248,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; z-index: 1000;
+    }
+    [data-theme="dark"] .shop-navbar { background: rgba(15,17,23,0.95); }
+    .enquiry-btn {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white; border: none; border-radius: 10px;
+      padding: 8px 18px; font-weight: 700; font-size: 0.85rem;
+      cursor: pointer; transition: var(--transition);
+    }
+    .enquiry-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .shop-product-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: var(--transition);
+      height: 100%;
+    }
+    .shop-product-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+    .shop-prod-img {
+      height: 200px; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .shop-prod-img img { width:100%; height:100%; object-fit:cover; }
+    .shop-prod-img .placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem; color: rgba(255,255,255,0.85);
+    }
+    .shop-prod-body { padding: 16px; }
+    .shop-prod-name { font-weight: 700; font-size: 1rem; color: var(--text); margin-bottom: 4px; }
+    .shop-prod-size { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 10px; }
+    .shop-prod-price { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
+    .btn-enquire {
+      width: 100%; margin-top: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white; border: none; border-radius: 10px;
+      padding: 10px; font-weight: 700; font-size: 0.88rem;
+      cursor: pointer; transition: var(--transition);
+    }
+    .btn-enquire:hover { opacity: 0.9; }
+    .btn-whatsapp-enquire {
+      width: 100%; margin-top: 8px;
+      background: rgba(37,211,102,0.1); color: #25D366;
+      border: 1px solid rgba(37,211,102,0.3); border-radius: 10px;
+      padding: 8px; font-weight: 600; font-size: 0.82rem;
+      cursor: pointer; transition: var(--transition);
+    }
+    .btn-whatsapp-enquire:hover { background: #25D366; color: white; }
+    .in-stock { color: #10B981; font-size: 0.75rem; font-weight: 600; }
+    .out-stock { color: #EF4444; font-size: 0.75rem; font-weight: 600; }
+    .welcome-bar {
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      padding: 10px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: fixed; top: 60px; left: 0; right: 0; z-index: 999;
+    }
+    .modal-product-img {
+      height: 250px; border-radius: var(--radius);
+      overflow: hidden; margin-bottom: 20px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-product-img img { width:100%; height:100%; object-fit:cover; }
+  </style>
+</head>
+<body>
+
+<!-- Shop Navbar -->
+<nav class="shop-navbar">
+  <div class="d-flex align-items-center gap-10">
+    <a href="index.html" class="navbar-brand" style="text-decoration:none">
+      <span class="brand-icon" style="width:32px;height:32px;font-size:0.85rem"><i class="fas fa-border-all"></i></span>
+      <span class="brand-text" style="font-size:1.1rem" id="shopBizName">Frame<strong>Craft</strong></span>
+    </a>
+  </div>
+  <div class="d-flex align-items-center gap-3">
+    <button class="btn btn-theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon" id="themeIcon"></i></button>
+    <span style="font-size:0.82rem;color:var(--text-muted)">👋 <span id="shopCustomerName">Guest</span></span>
+    <button class="btn btn-sm" style="color:#EF4444;font-size:0.82rem;background:rgba(239,68,68,0.08);border-radius:6px;padding:4px 12px;border:1px solid rgba(239,68,68,0.15)" onclick="logout()">
+      <i class="fas fa-sign-out-alt me-1"></i>Logout
+    </button>
+  </div>
+</nav>
+
+<!-- Welcome Bar -->
+<div class="welcome-bar" style="top:60px">
+  <div style="font-size:0.85rem;color:var(--text-muted)">
+    <i class="fas fa-store me-2" style="color:var(--primary)"></i>
+    Browse our photo frame collection and enquire via WhatsApp
+  </div>
+  <div style="font-size:0.78rem;color:var(--text-muted)">
+    <i class="fas fa-phone me-1" style="color:var(--primary)"></i><span id="shopPhone">+91 98765 43210</span>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div style="padding-top:110px;padding-bottom:40px;background:var(--bg);min-height:100vh">
+  <div class="container">
+
+    <!-- Hero -->
+    <div style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:white;border-radius:var(--radius);padding:40px 32px;margin-bottom:32px;text-align:center">
+      <div style="font-size:0.82rem;opacity:0.8;margin-bottom:8px">Welcome, <strong id="heroCustomerName">Customer</strong>!</div>
+      <h2 style="font-family:var(--font-display);font-size:2rem;font-weight:800;margin-bottom:8px">Our Frame Collection</h2>
+      <p style="opacity:0.9;font-size:0.95rem">Browse premium photo frames — enquire via WhatsApp for orders</p>
+    </div>
+
+    <!-- Search + Filter -->
+    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:24px">
+      <div class="row g-3 align-items-center">
+        <div class="col-md-5">
+          <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" class="form-control" id="shopSearch" placeholder="Search frames..." oninput="renderShopProducts()"/>
+          </div>
+        </div>
+        <div class="col-md-7">
+          <div class="d-flex gap-2 flex-wrap">
+            <button class="filter-chip active" onclick="setShopCat('all',this)">All</button>
+            <button class="filter-chip" onclick="setShopCat('wood',this)">🪵 Wood</button>
+            <button class="filter-chip" onclick="setShopCat('metal',this)">🔩 Metal</button>
+            <button class="filter-chip" onclick="setShopCat('premium',this)">⭐ Premium</button>
+            <button class="filter-chip" onclick="setShopCat('kids',this)">👶 Kids</button>
+            <button class="filter-chip" onclick="setShopCat('glass',this)">🔮 Glass</button>
+            <button class="filter-chip" onclick="setShopCat('collage',this)">🖼️ Collage</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="row g-4" id="shopProductsGrid"></div>
+
+    <!-- Empty State -->
+    <div id="shopEmpty" class="empty-state" style="display:none">
+      <i class="fas fa-search"></i>
+      <h4>No frames found</h4>
+      <p>Try a different search or category</p>
+    </div>
+
+    <!-- Contact CTA -->
+    <div style="margin-top:48px;background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:32px;text-align:center">
+      <h5 style="font-family:var(--font-display);font-weight:700;margin-bottom:8px;color:var(--text)">Need a Custom Frame?</h5>
+      <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:20px">Contact us for custom sizes, bulk orders, and special designs</p>
+      <div class="d-flex gap-3 justify-content-center flex-wrap">
+        <button class="enquiry-btn" onclick="whatsappGeneral()">
+          <i class="fab fa-whatsapp me-2"></i>WhatsApp Us
+        </button>
+        <a href="contact.html" class="btn btn-outline-custom">
+          <i class="fas fa-envelope me-2"></i>Contact Form
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Product Detail Modal -->
+<div class="modal fade" id="productModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" style="background:var(--card-bg);border:1px solid var(--border)">
+      <div class="modal-header" style="border-bottom:1px solid var(--border)">
+        <h5 class="modal-title" style="font-weight:700" id="modalProdName">Frame Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="modalProdBody"></div>
+      <div class="modal-footer" style="border-top:1px solid var(--border)">
+        <button class="btn btn-outline-custom" data-bs-dismiss="modal">Close</button>
+        <button class="btn" style="background:#25D366;color:white;border-radius:10px;font-weight:700;padding:10px 24px" id="modalWhatsappBtn">
+          <i class="fab fa-whatsapp me-2"></i>Order via WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/app.js"></script>
+<script src="js/auth.js"></script>
+<script>
+let shopCat = 'all';
+const GRADIENTS = [
+  'linear-gradient(135deg,#8B5E3C,#D4A05A)',
+  'linear-gradient(135deg,#4B5563,#9CA3AF)',
+  'linear-gradient(135deg,#C8860A,#F59E0B)',
+  'linear-gradient(135deg,#DB2777,#F9A8D4)',
+  'linear-gradient(135deg,#2563EB,#60A5FA)',
+  'linear-gradient(135deg,#059669,#34D399)',
+  'linear-gradient(135deg,#0891B2,#67E8F9)',
+  'linear-gradient(135deg,#92400E,#D97706)'
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Auth check — customer or admin/staff allowed
+  const session = requireAuth(['customer', 'admin', 'staff']);
+  if (!session) return;
+
+  const s = getSettings();
+
+  // Set names
+  const cname = session.name || 'Customer';
+  ['shopCustomerName','heroCustomerName'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.textContent = cname;
+  });
+  const bizEl = document.getElementById('shopBizName');
+  if (bizEl && s.businessName) bizEl.innerHTML = `<strong>${s.businessName}</strong>`;
+  const phEl = document.getElementById('shopPhone');
+  if (phEl && s.phone) phEl.textContent = s.phone;
+
+  renderShopProducts();
+});
+
+function setShopCat(cat, el) {
+  shopCat = cat;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderShopProducts();
+}
+
+function renderShopProducts() {
+  const search = (document.getElementById('shopSearch')?.value || '').toLowerCase();
+  let products = getProducts().filter(p => (p.stock || 0) >= 0); // show all
+  if (shopCat !== 'all') products = products.filter(p => p.category === shopCat);
+  if (search) products = products.filter(p =>
+    p.name.toLowerCase().includes(search) ||
+    (p.size||'').toLowerCase().includes(search) ||
+    (p.desc||'').toLowerCase().includes(search)
+  );
+
+  const grid = document.getElementById('shopProductsGrid');
+  const empty = document.getElementById('shopEmpty');
+  if (!grid) return;
+
+  if (products.length === 0) {
+    grid.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+
+  grid.innerHTML = products.map((p, idx) => {
+    const inStock = (p.stock || 0) > 0;
+    const imgHtml = p.image
+      ? `<img src="${p.image}" alt="${p.name}"/>`
+      : `<div class="placeholder" style="background:${GRADIENTS[idx%GRADIENTS.length]}"><i class="fas fa-border-all"></i></div>`;
+    return `
+    <div class="col-sm-6 col-md-4 col-lg-3">
+      <div class="shop-product-card">
+        <div class="shop-prod-img" style="${!p.image?'':''}">
+          ${imgHtml}
+        </div>
+        <div class="shop-prod-body">
+          <div class="shop-prod-name">${p.name}</div>
+          <div class="shop-prod-size">${p.size||'—'} • <span style="text-transform:capitalize">${p.category}</span></div>
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="shop-prod-price">${formatCurrency(p.price)}</div>
+            <span class="${inStock?'in-stock':'out-stock'}">
+              <i class="fas fa-circle" style="font-size:0.5rem;vertical-align:middle;margin-right:3px"></i>
+              ${inStock ? 'In Stock' : 'Out of Stock'}
+            </span>
+          </div>
+          ${p.desc ? `<div style="font-size:0.78rem;color:var(--text-muted);margin-top:6px">${p.desc}</div>` : ''}
+          <button class="btn-enquire" onclick="viewProduct(${p.id})">
+            <i class="fas fa-eye me-2"></i>View Details
+          </button>
+          <button class="btn-whatsapp-enquire" onclick="whatsappEnquiry(${p.id})">
+            <i class="fab fa-whatsapp me-2"></i>Enquire on WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function viewProduct(id) {
+  const p = getProducts().find(p => p.id === id);
+  if (!p) return;
+  const idx = getProducts().indexOf(p);
+  const s = getSettings();
+  const inStock = (p.stock||0) > 0;
+
+  document.getElementById('modalProdName').textContent = p.name;
+
+  const imgHtml = p.image
+    ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius)"/>`
+    : `<div style="background:${GRADIENTS[idx%GRADIENTS.length]};width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;color:rgba(255,255,255,0.85);border-radius:var(--radius)"><i class="fas fa-border-all"></i></div>`;
+
+  document.getElementById('modalProdBody').innerHTML = `
+    <div class="modal-product-img">${imgHtml}</div>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:4px">Frame Name</div>
+        <div style="font-weight:700;font-size:1.1rem;color:var(--text)">${p.name}</div>
+      </div>
+      <div class="col-md-3">
+        <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:4px">Size</div>
+        <div style="font-weight:600;color:var(--text)">${p.size||'—'}</div>
+      </div>
+      <div class="col-md-3">
+        <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:4px">Category</div>
+        <div style="font-weight:600;color:var(--text);text-transform:capitalize">${p.category}</div>
+      </div>
+      <div class="col-md-4">
+        <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:4px">Price</div>
+        <div style="font-size:1.6rem;font-weight:800;color:var(--primary)">${formatCurrency(p.price)}</div>
+      </div>
+      <div class="col-md-4">
+        <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:4px">Availability</div>
+        <div style="font-weight:700;color:${inStock?'#10B981':'#EF4444'}">
+          <i class="fas fa-circle" style="font-size:0.6rem;vertical-align:middle;margin-right:4px"></i>
+          ${inStock ? `In Stock (${p.stock} units)` : 'Out of Stock'}
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:4px">Unit</div>
+        <div style="font-weight:600;color:var(--text)">${p.unit||'Pcs'}</div>
+      </div>
+      ${p.desc ? `
+      <div class="col-12">
+        <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:4px">Description</div>
+        <div style="color:var(--text-muted);font-size:0.9rem;line-height:1.6">${p.desc}</div>
+      </div>` : ''}
+    </div>
+  `;
+
+  document.getElementById('modalWhatsappBtn').onclick = () => whatsappEnquiry(id);
+  new bootstrap.Modal(document.getElementById('productModal')).show();
+}
+
+function whatsappEnquiry(id) {
+  const p = getProducts().find(p => p.id === id);
+  const s = getSettings();
+  const session = getSession();
+  if (!p) return;
+  const msg = `Hi! I'm interested in ordering:\n\n🖼️ *${p.name}*\nSize: ${p.size||'—'}\nPrice: ${formatCurrency(p.price)}\n\nCustomer: ${session?.name||'Customer'}\nPhone: ${session?.phone||''}\n\nPlease confirm availability and delivery details.`;
+  const phone = (s.whatsapp||s.phone||'').replace(/\D/g,'');
+  window.open(`https://wa.me/${phone?'91'+phone.slice(-10):''}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function whatsappGeneral() {
+  const s = getSettings();
+  const session = getSession();
+  const msg = `Hi ${s.businessName}! I'd like to enquire about your photo frames.\n\nCustomer: ${session?.name||'Customer'}\nPhone: ${session?.phone||''}`;
+  const phone = (s.whatsapp||s.phone||'').replace(/\D/g,'');
+  window.open(`https://wa.me/${phone?'91'+phone.slice(-10):''}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+window.setShopCat = setShopCat;
+window.renderShopProducts = renderShopProducts;
+window.viewProduct = viewProduct;
+window.whatsappEnquiry = whatsappEnquiry;
+window.whatsappGeneral = whatsappGeneral;
+</script>
+</body>
+</html>
