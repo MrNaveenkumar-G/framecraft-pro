@@ -196,3 +196,30 @@ window.getReminders = getReminders;
 window.saveReminders = saveReminders;
 window.getInitials = getInitials;
 window.generateInvoiceId = generateInvoiceId;
+
+// ============================================
+//  Mobile Sidebar Toggle
+// ============================================
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (!sidebar) return;
+  sidebar.classList.toggle('open');
+  if (overlay) overlay.classList.toggle('show');
+}
+function closeSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (sidebar) sidebar.classList.remove('open');
+  if (overlay) overlay.classList.remove('show');
+}
+// Close sidebar on nav link click (mobile)
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.sidebar-menu a').forEach(a => {
+    a.addEventListener('click', () => {
+      if (window.innerWidth < 992) closeSidebar();
+    });
+  });
+});
+window.toggleSidebar = toggleSidebar;
+window.closeSidebar  = closeSidebar;
