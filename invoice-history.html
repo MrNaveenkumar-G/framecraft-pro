@@ -11,22 +11,17 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
-  <div class="container-fluid px-4 d-flex align-items-center gap-2">
-    <button class="mobile-sidebar-toggle d-lg-none" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+  <div class="container-fluid px-4">
     <a class="navbar-brand" href="index.html"><span class="brand-icon"><i class="fas fa-border-all"></i></span><span class="brand-text">Frame<strong>Craft</strong></span></a>
     <div class="d-flex align-items-center gap-3 ms-auto">
       <button class="btn btn-theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon" id="themeIcon"></i></button>
-      <div class="nav-profile" onclick="window.location='settings.html'"><img src="" id="navAvatar" class="nav-avatar" alt=""/><span id="navUserName">User</span>
-      
-      <button class="btn btn-sm ms-1" style="color:#EF4444;background:rgba(239,68,68,0.08);border-radius:6px;padding:4px 10px;border:1px solid rgba(239,68,68,0.15);font-size:0.8rem" onclick="logout()"><i class="fas fa-sign-out-alt me-1"></i>Logout</button>
-      <DUMMYCLOSE>
-    
-  
+      <div class="nav-profile" onclick="window.location='settings.html'"><img src="" id="navAvatar" class="nav-avatar" alt=""/><span id="navUserName">User</span></div>
+    </div>
+  </div>
 </nav>
 <div class="dashboard-layout">
-  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
-<aside class="sidebar" id="sidebar">
-    <div class="sidebar-section-label">Main
+  <aside class="sidebar">
+    <div class="sidebar-section-label">Main</div>
     <ul class="sidebar-menu">
       <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
       <li><a href="invoice.html"><i class="fas fa-file-invoice"></i> New Invoice</a></li>
@@ -34,35 +29,34 @@
       <li><a href="customers.html"><i class="fas fa-users"></i> Customers</a></li>
       <li><a href="products.html"><i class="fas fa-th-large"></i> Products</a></li>
     </ul>
-    <div class="sidebar-section-label">Tools
+    <div class="sidebar-section-label">Tools</div>
     <ul class="sidebar-menu">
       <li><a href="reminders.html"><i class="fas fa-bell"></i> Reminders</a></li>
-      <li><a href="user-management.html" class="sidebar-users"><i class="fas fa-user-shield"></i> Users</a></li>
-      <li><a href="settings.html" class="sidebar-settings"><i class="fas fa-cog"></i> Settings</a></li>
+      <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
     </ul>
   </aside>
   <main class="main-content">
     <div class="page-header">
       <div class="d-flex align-items-center">
-        <div class="page-header-icon"><i class="fas fa-history"></i>
-        <div><h2>Invoice History</h2><p>All your invoices in one place</p>
-      
+        <div class="page-header-icon"><i class="fas fa-history"></i></div>
+        <div><h2>Invoice History</h2><p>All your invoices in one place</p></div>
+      </div>
       <div class="d-flex gap-2 flex-wrap">
         <button class="btn btn-outline-custom" onclick="exportAll()"><i class="fas fa-download me-2"></i>Export CSV</button>
         <a href="invoice.html" class="btn btn-primary-custom"><i class="fas fa-plus me-2"></i>New Invoice</a>
-      
-    
+      </div>
+    </div>
 
     <!-- Summary Cards -->
-    <div class="row g-3 mb-4" id="summaryCards">
+    <div class="row g-3 mb-4" id="summaryCards"></div>
 
     <!-- Filters -->
     <div class="chart-card mb-4">
       <div class="row g-3 align-items-end">
         <div class="col-md-4">
           <label class="form-label">Search</label>
-          <div class="search-bar"><i class="fas fa-search"></i><input type="text" class="form-control" id="searchInv" placeholder="Search by name, ID..." oninput="filterInvoices()"/>
-        
+          <div class="search-bar"><i class="fas fa-search"></i><input type="text" class="form-control" id="searchInv" placeholder="Search by name, ID..." oninput="filterInvoices()"/></div>
+        </div>
         <div class="col-md-2">
           <label class="form-label">Status</label>
           <select class="form-select" id="filterStatus" onchange="filterInvoices()">
@@ -71,20 +65,20 @@
             <option value="pending">Pending</option>
             <option value="overdue">Overdue</option>
           </select>
-        
+        </div>
         <div class="col-md-2">
           <label class="form-label">From</label>
           <input type="date" class="form-control" id="filterFrom" onchange="filterInvoices()"/>
-        
+        </div>
         <div class="col-md-2">
           <label class="form-label">To</label>
           <input type="date" class="form-control" id="filterTo" onchange="filterInvoices()"/>
-        
+        </div>
         <div class="col-md-2">
           <button class="btn btn-outline-custom w-100" onclick="clearFilters()"><i class="fas fa-times me-1"></i>Clear</button>
-        
-      
-    
+        </div>
+      </div>
+    </div>
 
     <!-- Table -->
     <div class="chart-card">
@@ -97,16 +91,16 @@
           </thead>
           <tbody id="historyTableBody"></tbody>
         </table>
-      
+      </div>
       <div id="emptyState" class="empty-state" style="display:none">
         <i class="fas fa-file-invoice"></i>
         <h4>No invoices found</h4>
         <p>Try different filters or create a new invoice.</p>
         <a href="invoice.html" class="btn btn-primary-custom mt-3"><i class="fas fa-plus me-2"></i>Create Invoice</a>
-      
-    
+      </div>
+    </div>
   </main>
-
+</div>
 
 <!-- Invoice Detail Modal -->
 <div class="modal fade" id="invoiceModal" tabindex="-1">
@@ -115,20 +109,19 @@
       <div class="modal-header" style="border-bottom:1px solid var(--border)">
         <h5 class="modal-title" style="font-weight:700">Invoice Details</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      
-      <div class="modal-body" id="modalBody">
+      </div>
+      <div class="modal-body" id="modalBody"></div>
       <div class="modal-footer" style="border-top:1px solid var(--border)">
         <button class="btn btn-outline-custom" data-bs-dismiss="modal">Close</button>
         <button class="btn btn-outline-custom" id="modalWhatsApp"><i class="fab fa-whatsapp me-2" style="color:#25D366"></i>WhatsApp</button>
         <button class="btn btn-primary-custom" id="modalPrint"><i class="fas fa-print me-2"></i>Print</button>
-      
-    
-  
-
+      </div>
+    </div>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/app.js"></script>
-<script src="js/auth.js"></script>
 <script src="js/invoice-history.js"></script>
 </body>
 </html>
